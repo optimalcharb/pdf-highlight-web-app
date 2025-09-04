@@ -30,13 +30,26 @@ import { Sidebar } from './components/sidebar';
 import { Toolbar } from './components/toolbar';
 import { ViewSidebarReverseIcon } from './icons';
 
+// import my files
+import { getBlobUrl } from './azure_pdf_url';
+
+// Hardcoded file path to the PDF
+const filePath: string = "icefe-circulars/25019.pdf";
+
+// Construct the URL and test fetch
+const blobUrl: string = getBlobUrl(filePath)
+
+// const blobUrl: string = "https://refubixstore.blob.core.windows.net/exchange-pdfs/icefe-circulars/25019.pdf?sp=r&st=2025-09-04T21:34:24Z&se=2025-10-01T05:49:24Z&spr=https&sv=2024-11-04&sr=c&sig=3IqxFsmwDF4E9y9VF5tdCW0J%2Bob98adpFJRUYR7WMg0%3D"
+
 const plugins = [
   createPluginRegistration(LoaderPluginPackage, {
     loadingOptions: {
       type: 'url',
       pdfFile: {
-        id: 'pdf',
-        url: 'https://snippet.embedpdf.com/ebook.pdf',
+        id: filePath.slice(0, -4), // pdf path without extension
+        // id: 'default',
+        url: blobUrl,
+        // url: 'https://snippet.embedpdf.com/ebook.pdf',
       },
     },
   }),

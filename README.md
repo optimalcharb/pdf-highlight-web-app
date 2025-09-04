@@ -1,114 +1,49 @@
-<div align="center">
-  <a href="https://www.embedpdf.com">
-    <img alt="EmbedPDF logo" src="https://www.embedpdf.com/logo-192.png" height="96">
-  </a>
+# PDF Viewer
 
-  <h1>EmbedPDF</h1>
+This is a minimum viable product (MVP) PDF viewer application that currrently displays a pdf from [the internet](https://snippet.embedpdf.com/ebook.pdf) and demonstrates features including search, zoom, and page controls.
 
-  <!-- Badges -->
+# System Architecture
 
-<a href="https://github.com/embedpdf/embed-pdf-viewer/blob/main/LICENSE"><img alt="License" src="https://img.shields.io/npm/l/@embedpdf/pdfium.svg?style=for-the-badge&labelColor=000000"></a>
-<a href="https://github.com/embedpdf/embed-pdf-viewer/discussions"><img alt="Join the community on GitHub" src="https://img.shields.io/badge/Join%20the%20community-blueviolet.svg?style=for-the-badge&labelColor=000000"></a>
+## Frontend Architecture
+The frontend is built with React using TypeScript and follows a component-based architecture. The application uses Vite as the build tool and development server, providing fast hot module replacement and optimized builds.
 
-</div>
+- **Framework**: React provides structure for building UI components, managing DOM updates, and handling interactivity. Do not use Vue, Angular, or other frameworks.
+- **UI Components**: React MUI. Do not use other libraries for components.
+- **State Management**: React built-in state hooks (like useState).
+- **Routing**: None. The web app is a single page. Do not use routing.
+- **Styling**: @mui/material/CssBaseline. Plain CSS is simple and sufficient. Do not use Tailwind or other styling tools.
+- **PDF Engine**: @embedpdf provides the functionality for rendering, annotations, and all other PDF functionality. Do not create custom functionality for highlighting. Do not add other engines or work with PDF.js directly.
+- **Build Tool**: Vite. Do not use other build tools.
 
-# React MUI PDF Viewer Example
+## Backend Architecture
+- **Framework**: Node.js with Typescript
+- **API**: No API is created by the web app. The web app does not have session handling, middleware, error handling
+- **Database**: No database is used by the web app. PDFs should only be accessed from the existing internet or local storage. No file upload functionality.
+- **Authentication** None.
+- **Development** Uses Vite for development (`dev`), building (`build`), previewing (`preview`), and ESLint for linting (`lint`).
 
-This example shows how to build a fully‑featured PDF viewer with **EmbedPDF**, **React 18** and **Material UI v7**. It demonstrates how to combine EmbedPDF’s plugin system with MUI components to create a polished reading experience that feels right at home in any React + MUI project.
+# External Dependencies
 
-- **Live demo:** [https://mui.embedpdf.com/](https://mui.embedpdf.com/)
-- **Docs:** [https://www.embedpdf.com](https://www.embedpdf.com)
+## Frontend Dependencies
+- **PDF-related Libraries** (18 packages):
+  - `@embedpdf/*` (e.g., `core`, `plugin-loader`, `plugin-viewport`, etc.): PDF functionality (rendering, zooming, scrolling, etc.).
+- **UI Framework**:
+  - `@mui/material` (`^ fastidious7.1.1`): Material-UI for React components.
+  - `@mui/icons-material` (`^7.1.1`): Material-UI icons.
+  - `@emotion/react` (`^11.14.0`): Emotion for CSS-in-JS styling.
+  - `@emotion/styled` (`^11.14.0`): Styled components for Emotion.
+- **React**:
+  - `react` (`^18.2.0`): React library for building UI.
+  - `react-dom` (`^18.2.0`): React DOM for rendering components.
 
----
-
-## Key features on display
-
-| Feature                                                    | Plugin(s)                                             |
-| ---------------------------------------------------------- | ----------------------------------------------------- |
-| Virtualised scrolling with smooth page rendering           | `@embedpdf/plugin-scroll` + `@embedpdf/plugin-render` |
-| Zoom controls (fit page, fit width, marquee zoom, presets) | `@embedpdf/plugin-zoom`                               |
-| Pan/hand tool                                              | `@embedpdf/plugin-pan`                                |
-| Rotate pages                                               | `@embedpdf/plugin-rotate`                             |
-| Single and spread layouts                                  | `@embedpdf/plugin-spread`                             |
-| Thumbnail sidebar                                          | `@embedpdf/plugin-thumbnail`                          |
-| In‑document text search                                    | `@embedpdf/plugin-search`                             |
-| File picker & download                                     | `@embedpdf/plugin-loader`, `@embedpdf/plugin-export`  |
-| Fullscreen support                                         | `@embedpdf/plugin-fullscreen`                         |
-
-The UI around these plugins is built with MUI’s `AppBar`, `Toolbar`, `Drawer`, `Menu`, `IconButton`, and other components. On mobile the side drawers collapse into a bottom sheet for a more native feel.
-
----
-
-## Quick start
-
-> **Prerequisites**
->
-> - Node 18 or newer
-> - **pnpm** 10 (recommended) or a recent pnpm 8/9
-
-1. **Clone the repo** (or your fork) and install dependencies:
-
-   ```bash
-   git clone https://github.com/embedpdf/embed-pdf-viewer.git
-   cd embed-pdf-viewer
-   pnpm install
-   ```
-
-2. **Build the core packages** once so that the example can import them:
-
-   ```bash
-   pnpm run build --filter "./packages/*"
-   # or keep them rebuilt automatically while you work:
-   pnpm watch build --filter "./packages/*"
-   ```
-
-3. **Run the example dev server**:
-
-   ```bash
-   pnpm --filter @embedpdf/example-react-mui run dev
-   ```
-
-   Vite will start on [http://localhost:3000](http://localhost:3000) and open the browser automatically.
-
----
-
-## Building a production bundle
-
-To create an optimized build (under `examples/react-mui/dist`):
-
-```bash
-pnpm --filter @embedpdf/example-react-mui run build
-```
-
-The output is a static site you can deploy to any CDN or static host.
-
----
-
-## Folder layout
-
-```
-examples/react-mui
-├── public/           # Static assets (if any)
-└── src/
-    ├── components/   # MUI‑based UI parts (toolbar, drawers, …)
-    ├── hooks/        # Small shared hooks (eg. use‑is‑mobile)
-    ├── application.tsx  # Main viewer shell and plugin wiring
-    └── main.tsx      # React entry + theming + worker setup
-```
-
-The worker (`src/webworker.ts`) loads the PDFium WebAssembly bundle from jsDelivr and passes it to EmbedPDF’s **WebWorkerEngine**.
-
----
-
-## Customisation tips
-
-- **Swap icons or colours:** The UI uses MUI’s `sx` prop everywhere, so styling tweaks are one line away.
-- **Add or remove plugins:** Open `src/application.tsx` and edit the `plugins` array.
-
-For deep dives check the [EmbedPDF documentation](https://www.embedpdf.com) and the source of this example.
-
----
-
-## License
-
-Example code is released under the MIT license, the same as EmbedPDF itself.
+## Dev Dependencies
+- **TypeScript & React Types**:
+  - `@types/react` (`^18.2.0`), `@types/react-dom` (`^18.2.0`): Type definitions for React.
+- **Linting**:
+  - `@typescript-eslint/eslint-plugin` (`^8.18.5`), `@typescript-eslint/parser` (`^8.18.5`): TypeScript ESLint plugins.
+  - `eslint` (`^9.17.0`): Linting tool.
+  - `eslint-plugin-react-hooks` (`^5.1.0`), `eslint-plugin-react-refresh` (`^0.4.18`): React-specific ESLint plugins.
+- **Build Tools**:
+  - `@vitejs/plugin-react` (`^4.3.4`): Vite plugin for React.
+  - `typescript` (`^5.7.3`): TypeScript compiler.
+  - `vite` (`^6.3.5`): Vite build tool and dev server.

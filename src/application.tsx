@@ -39,7 +39,7 @@ const createPlugins = (pdfUrl: string) => [
     loadingOptions: {
       type: 'url',
       pdfFile: {
-        id: 'pdf',
+        id: '12345',
         url: pdfUrl,
       },
     },

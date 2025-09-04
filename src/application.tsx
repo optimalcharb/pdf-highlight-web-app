@@ -25,7 +25,7 @@ import { SelectionLayer } from '@embedpdf/plugin-selection/react';
 
 import { CircularProgress, Box, Alert } from '@mui/material';
 import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
-import { useMemo } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 
 import { PageControls } from './components/page-controls';
 import { Search } from './components/search';
@@ -34,13 +34,13 @@ import { Sidebar } from './components/sidebar';
 import { Toolbar } from './components/toolbar';
 import { ViewSidebarReverseIcon } from './icons';
 
-const plugins = [
+const createPlugins = (pdfUrl: string) => [
   createPluginRegistration(LoaderPluginPackage, {
     loadingOptions: {
       type: 'url',
       pdfFile: {
         id: 'pdf',
-        url: 'https://snippet.embedpdf.com/ebook.pdf',
+        url: pdfUrl,
       },
     },
   }),
@@ -90,10 +90,43 @@ const drawerComponents: DrawerComponent[] = [
 const consoleLogger = new ConsoleLogger();
 
 function App() {
+  const [pdfBlobUrl, setPdfBlobUrl] = useState<string | null>(null);
+  const [pdfError, setPdfError] = useState<string | null>(null);
+
   const isDev = useMemo(
     () => new URLSearchParams(window.location.search).get('dev') === 'true',
     [],
   );
+
+  // Load the local PDF file and create a blob URL
+  useEffect(() => {
+    const loadPdf = async () => {
+      try {
+        const response = await fetch('/sample.pdf');
+        if (!response.ok) {
+          throw new Error(`Failed to load PDF: ${response.statusText}`);
+        }
+        const blob = await response.blob();
+        const blobUrl = URL.createObjectURL(blob);
+        setPdfBlobUrl(blobUrl);
+      } catch (err) {
+        setPdfError(err instanceof Error ? err.message : 'Failed to load PDF');
+      }
+    };
+    loadPdf();
+
+    // Cleanup blob URL on unmount
+    return () => {
+      if (pdfBlobUrl) {
+        URL.revokeObjectURL(pdfBlobUrl);
+      }
+    };
+  }, []);
+
+  const plugins = useMemo(() => {
+    if (!pdfBlobUrl) return [];
+    return createPlugins(pdfBlobUrl);
+  }, [pdfBlobUrl]);
 
   const { engine, isLoading, error } = usePdfiumEngine(isDev ? { logger: consoleLogger } : {});
 

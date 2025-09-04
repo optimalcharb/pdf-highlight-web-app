@@ -14,10 +14,6 @@ import {
   PagePointerProvider,
   InteractionManagerPluginPackage,
 } from '@embedpdf/plugin-interaction-manager/react';
-import { PanPluginPackage } from '@embedpdf/plugin-pan/react';
-import { Rotate, RotatePluginPackage } from '@embedpdf/plugin-rotate/react';
-import { SpreadPluginPackage } from '@embedpdf/plugin-spread/react';
-import { FullscreenPluginPackage } from '@embedpdf/plugin-fullscreen/react';
 import { ExportPluginPackage } from '@embedpdf/plugin-export/react';
 import { ThumbnailPluginPackage } from '@embedpdf/plugin-thumbnail/react';
 import { SelectionPluginPackage } from '@embedpdf/plugin-selection/react';
@@ -61,10 +57,6 @@ const plugins = [
   }),
   createPluginRegistration(SearchPluginPackage),
   createPluginRegistration(InteractionManagerPluginPackage),
-  createPluginRegistration(PanPluginPackage),
-  createPluginRegistration(RotatePluginPackage),
-  createPluginRegistration(SpreadPluginPackage),
-  createPluginRegistration(FullscreenPluginPackage),
   createPluginRegistration(ExportPluginPackage),
   createPluginRegistration(ThumbnailPluginPackage),
   createPluginRegistration(SelectionPluginPackage),
@@ -186,36 +178,35 @@ function App() {
                     {pluginsReady && (
                       <Scroller
                         renderPage={({ document, width, height, pageIndex, scale, rotation }) => (
-                          <Rotate key={document?.id} pageSize={{ width, height }}>
-                            <PagePointerProvider
+                          <PagePointerProvider
+                            key={document?.id}
+                            pageIndex={pageIndex}
+                            pageWidth={width}
+                            pageHeight={height}
+                            rotation={rotation}
+                            scale={scale}
+                            style={{
+                              width,
+                              height,
+                            }}
+                          >
+                            <RenderLayer
                               pageIndex={pageIndex}
-                              pageWidth={width}
-                              pageHeight={height}
-                              rotation={rotation}
+                              style={{ pointerEvents: 'none' }}
+                            />
+                            <TilingLayer
+                              pageIndex={pageIndex}
                               scale={scale}
-                              style={{
-                                width,
-                                height,
-                              }}
-                            >
-                              <RenderLayer
-                                pageIndex={pageIndex}
-                                style={{ pointerEvents: 'none' }}
-                              />
-                              <TilingLayer
-                                pageIndex={pageIndex}
-                                scale={scale}
-                                style={{ pointerEvents: 'none' }}
-                              />
-                              <SearchLayer
-                                pageIndex={pageIndex}
-                                scale={scale}
-                                style={{ pointerEvents: 'none' }}
-                              />
-                              <MarqueeZoom pageIndex={pageIndex} scale={scale} />
-                              <SelectionLayer pageIndex={pageIndex} scale={scale} />
-                            </PagePointerProvider>
-                          </Rotate>
+                              style={{ pointerEvents: 'none' }}
+                            />
+                            <SearchLayer
+                              pageIndex={pageIndex}
+                              scale={scale}
+                              style={{ pointerEvents: 'none' }}
+                            />
+                            <MarqueeZoom pageIndex={pageIndex} scale={scale} />
+                            <SelectionLayer pageIndex={pageIndex} scale={scale} />
+                          </PagePointerProvider>
                         )}
                       />
                     )}
